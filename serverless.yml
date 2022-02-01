@@ -1,0 +1,65 @@
+service: serverless-api-canary
+
+frameworkVersion: '3'
+
+plugins:
+  - serverless-deployment-bucket
+  - serverless-plugin-canary-deployments
+  - serverless-prune-plugin
+
+custom:
+  prune:
+    automatic: true
+    number: 3
+
+# CodeDeploy Options:
+# Canary10Percent5Minutes
+# Canary10Percent10Minutes
+# Canary10Percent15Minutes
+# Canary10Percent30Minutes
+# Linear10PercentEvery1Minute
+# Linear10PercentEvery2Minute
+# Linear10PercentEvery3Minute
+# Linear10PercentEvery10Minute
+# AllAtOnce
+params:
+  dev:
+    deployType: AllAtOnce
+  master:
+    deployType: Canary10Percent5Minutes
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - codedeploy:Get*
+      Resource:
+        - "*"
+    - Effect: Allow
+      Action:
+        - lambda:InvokeFunction
+      Resource:
+        - "*"
+      
+  deploymentBucket:
+    name: ${opt:stage}-${env:COUNTRY}-${opt:region}-yuan-deployments
+    blockPublicAccess: true
+
+functions:
+  hello:
+    handler: ./src/serverless-api-canary.hello
+    events:
+      - httpApi:
+          path: /
+          method: get
+    deploymentSettings:
+      type: ${param:deployType}
+      alias: live
+      preTrafficHook: preHook
+      postTrafficHook: postHook
+  preHook:
+    handler: ./src/hooks/deploy-pre.pre
+  postHook:
+    handler: ./src/hooks/deploy-post.post
