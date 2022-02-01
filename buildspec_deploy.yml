@@ -8,7 +8,7 @@ version: 0.2
 env:
   variables:
     SSM_REGION: us-west-2 # Parameter store linking country-branch to account, build role
-    HANDLER_FILE: src/serverless-api.js
+    HANDLER_FILE: src/serverless-api-canary.js
 phases:
   install:
     commands:
