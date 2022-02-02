@@ -2,10 +2,10 @@
 exports.hello = async (event) => {
   console.debug('Event: ', event);
   return {
-    statusCode: 200,
+    statusCode: 201,
     body: JSON.stringify(
       {
-        apiVersion: '0.0.1',
+        apiVersion: '0.1.0',
         message: `Canary Deployment - %%COUNTRY%%@%%BRANCH%% at ${process.env.AWS_REGION}`,
         buildDate: '%%BUILDDATE%%',
       },
