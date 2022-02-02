@@ -2,7 +2,7 @@
 exports.hello = async (event) => {
   console.debug('Event: ', event);
   return {
-    statusCode: 200,
+    statusCode: 201,
     body: JSON.stringify(
       {
         apiVersion: '0.5.0',
